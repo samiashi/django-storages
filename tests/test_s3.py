@@ -766,8 +766,11 @@ class S3StorageTests(TestCase):
             self.assertEqual(self.storage.url(filename), url)
 
             self.storage.querystring_auth = True
-            dt.utcnow.return_value = datetime.datetime.utcfromtimestamp(0)
+            dt.now.return_value = datetime.datetime.fromtimestamp(
+                0, datetime.timezone.utc
+            )
             self.assertEqual(self.storage.url(filename), signed_url)
+            dt.now.assert_called_with(datetime.timezone.utc)
 
     def test_generated_url_is_encoded(self):
         self.storage.custom_domain = "mock.cloudfront.net"
